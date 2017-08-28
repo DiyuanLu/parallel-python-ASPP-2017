@@ -1,23 +1,21 @@
 from skimage import data, io
 import matplotlib.pyplot as plt
+import numpy as np
 
-def blur(data, nblurs):
-    blurred_data_1 = data.copy()
-    blurred_data_2 = data.copy()
-    ny, nx = data.shape
-    for step in range(nblurs):  
-        for i in range(1, ny-1):
-            for j in range(1, nx-1):
-                blurred_data_1[i, j] = (blurred_data_2[i, j-1] + blurred_data_2[i, j+1] + 
-                                        blurred_data_2[i-1, j] + blurred_data_2[i+1, j])/4.0
-        blurred_data_2, blurred_data_1 = blurred_data_1, blurred_data_2
-    return blurred_data_2
-
-
+def blur(in_data, out_data):
+    ny, nx = in_data.shape
+    for i in range(1, ny-1):
+        for j in range(1, nx-1):
+            out_data[i, j] = (in_data[i, j-1] + in_data[i, j+1] + 
+                                    in_data[i-1, j] + in_data[i+1, j])/4.0
 
 if __name__ == "__main__":
     n = 50
     img = data.load('coffee.png', as_grey=True)
-    blurred_img = blur(img, n)
-    io.imshow(blurred_img)
-    plt.show()
+    img_cpy = np.copy(img)
+
+    for i in range(n):
+        blur(img, img_cpy)
+        img_cpy, img = img, img_cpy
+    io.imshow(img)
+    plt.show() 
