@@ -5,15 +5,12 @@ import timeit
 
 def blur(in_data, out_data):
     ny, nx = in_data.shape
-    for i in range(1, ny-1):
-        for j in range(1, nx-1):
-            out_data[i, j] = (in_data[i, j-1] + in_data[i, j+1] + 
-                                    in_data[i-1, j] + in_data[i+1, j])/4.0
+    out_data[1:-1, 1:-1] = (in_data[0:-2, 1:-1] + in_data[2:, 1:-1] +
+                            in_data[1:-1, 0:-2] + in_data[1:-1, 2:])/4.0
 
 if __name__ == "__main__":
-    n = 50
+    n = 100
     img = img_as_float(io.imread('coffee.png', as_grey=True))
-    print(img)
     img_cpy = np.copy(img)
     t1 = timeit.default_timer()
     for i in range(n):

@@ -1,5 +1,4 @@
 from skimage import data, io
-from skimage.transform import rescale
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -10,9 +9,7 @@ import ctypes
 import functools
 import itertools
 
-scale = 2
-
-img = rescale(data.load('coffee.png', as_grey=True), scale)
+img = data.load('coffee.png', as_grey=True)
 nrows, ncols = img.shape
 
 shared_array_1 = multiprocessing.sharedctypes.RawArray(ctypes.c_double, nrows*ncols)
@@ -37,18 +34,19 @@ def blur(rows, flip, start_row, in_ary=shared_array_1, out_ary=shared_array_2):
     if tile_end == ny:
         tile_end = tile_end-1
 
-    for i in range(tile_start, tile_end):
-        for j in range(1, nx-1):
-            out_data[i, j] = (in_data[i, j-1] + in_data[i, j+1] + 
-                                    in_data[i-1, j] + in_data[i+1, j])/4.0
+    out_data[tile_start:tile_end, 1:-1] = (
+            in_data[tile_start-1:tile_end-1, 1:-1] +
+            in_data[tile_start+1:tile_end+1, 1:-1] +
+            in_data[tile_start:tile_end, 0:-2] +
+            in_data[tile_start:tile_end, 2:])/4.0
 
-n = 50
+n = 100
 nprocs = 4
 
 img = np.frombuffer(shared_array_1).reshape([nrows, ncols])
 img_cpy = np.frombuffer(shared_array_2).reshape([nrows, ncols])
 
-img[...] = rescale(data.load('coffee.png', as_grey=True), scale)
+img[...] = data.load('coffee.png', as_grey=True)
 img_cpy[...] = img[...]
 
 p = multiprocessing.Pool(nprocs)
