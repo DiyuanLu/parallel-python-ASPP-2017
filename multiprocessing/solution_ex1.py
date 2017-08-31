@@ -12,9 +12,5 @@ def make_plot(i):
     plt.imshow(temps[i], interpolation='spline36')
     plt.savefig('{}.png'.format(years[i]))
 
-#p = Pool(1)
-#p.map(make_plot, range(8))
-for i, year in enumerate(years):
-    print(i)
-    plt.imshow(temps[i], interpolation='spline36')
-    plt.savefig('{}.png'.format(years[i]))
+p = Pool(1)
+p.map(make_plot, range(8))

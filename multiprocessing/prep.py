@@ -4,11 +4,11 @@ from skimage.transform import rescale
 import glob
 import h5py
 
-data = np.loadtxt('2010.csv', delimiter=',')
+data = np.loadtxt('raw_data/2010.csv', delimiter=',')
 data = rescale(data, 10)
 nrows, ncols = data.shape
 
-for filename in sorted(glob.glob('*csv'))[1:]:
+for filename in sorted(glob.glob('raw_data/*csv'))[1:]:
     tmp = rescale(np.loadtxt(filename, delimiter=','), 10)
     print(tmp.shape)
     data = np.vstack([data, tmp])
