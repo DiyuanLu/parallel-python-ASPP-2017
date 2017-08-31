@@ -27,7 +27,7 @@ for i in range(100):
         comm.Sendrecv(top_send, dest=rank-1, sendtag=10, recvbuf=top_recv, source=rank-1, recvtag=20)
         #comm.Isend(top_send, dest=rank-1, tag=10)
         #comm.Irecv(top_recv, source=rank-1, tag=20)
-        
+
     if rank < size-1:
         bottom_send[...] = img_part[-1, :]
         comm.Sendrecv(bottom_send, dest=rank+1, sendtag=20, recvbuf=bottom_recv, source=rank+1, recvtag=10)
@@ -37,11 +37,11 @@ for i in range(100):
     img_part_2[1:-1, 1:-1] =  (img_part[0:-2, 1:-1] + img_part[2:, 1:-1] +
         img_part[1:-1, 0:-2] + img_part[1:-1, 2:])/4.0
 
-    comm.Barrier()
+    comm.Barrier()#make sure other process are done with current task
 
     if rank < size-1:
         img_part_2[-1, 1:-1] = (img_part[-2, 1:-1] + bottom_recv[1:-1] + img_part[-1, 0:-2] + img_part[-1, 2:])/4.0
-    
+
     if rank > 0:
        img_part_2[0, 1:-1] = (img_part[1, 1:-1] + top_recv[1:-1] + img_part[0, 0:-2] + img_part[0, 2:])/4.0
 
@@ -55,4 +55,3 @@ if rank == 0:
     print(t2-t1)
     io.imshow(img)
     plt.show()
-

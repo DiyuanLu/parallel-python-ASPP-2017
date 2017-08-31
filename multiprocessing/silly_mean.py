@@ -17,6 +17,11 @@ data = np.random.rand(N, N)
 
 
 # -- YOUR CODE HERE --
+data_chunks = np.array_split(data, 4)
 
+p = multiprocessing.Pool(2)
+sums= p.map(silly_sum, data_chunks)
+
+print(sum(sum))
 
 # --------------------
